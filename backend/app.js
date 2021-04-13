@@ -45,7 +45,7 @@ app.use(function (req, res, next) {
 app.use(bodyParser.json());
 
 async function getUser(req, res) {
-    console.log('getUsers');
+    console.log(`get user ${req.params.userId}`);
     //let user = await User.findOne({email: req.params.userId});
     let user = await User.aggregate([
         {'$match': {'email': req.params.userId}}, 
@@ -62,7 +62,14 @@ async function getUser(req, res) {
         res.status(200).send(user);
 }
 
+async function deleteFriend(req, res) {
+    console.log(`delete friend ${req.params.friendId} of user ${req.params.userId}`);
+    await User.updateOne({'email': req.params.userId}, {'$pull': {'friends': req.params.friendId}})
+    res.status(200).send();
+}
+
 app.get('/users/:userId', [getUser]);
+app.delete('/users/:userId/friends/:friendId', [deleteFriend])
 
     
 app.listen(config.port, function () {

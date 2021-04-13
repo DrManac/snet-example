@@ -11,8 +11,6 @@ const User = mongoose.model('User',
         friends: [{type : ObjectId, ref: 'User' }]
     });
 
-app.get()
-
 async function main() {
     await User.deleteMany()
     let friends = [];

@@ -12,9 +12,10 @@ import {
 var userId = 'test6@test'
 
 async function loadData(id) {
-  let responce = await fetch(`http://localhost:3600/users/${id}`)
-  return responce.json()
+  let response = await fetch(`http://localhost:3600/users/${id}`)
+  return response.json()
 }
+
 
 class UserPage extends React.Component {
   constructor(props) {
@@ -24,12 +25,22 @@ class UserPage extends React.Component {
     };
     loadData(userId).then((data) => {this.setState({userData: data})})
   }
+  deleteFriend = async (friendId) => {
+    await fetch( `http://localhost:3600/users/${userId}/friends/${friendId}`, {method: 'DELETE'})
+    loadData(userId).then((data) => {this.setState({userData: data})})
+  }
+  
   render() {
     return <div>
       <h1>{this.state.userData?.name}</h1>
-        <input type="button" value='Log out'></input>
+        <input type="button" value='Log out'/>
         <ul>
-          {this.state.userData?.friends.map(f => <li><Link to={f.email}>{f.name}</Link> <input type="button" value="-"></input></li>)}
+          {this.state.userData?.friends.map((f, i) => 
+            <li key={i}>
+              <Link to={f.email}>{f.name}</Link>
+              <button onClick={(e) => this.deleteFriend(f._id)}>-</button>
+            </li>
+          )}
         </ul>
         <div id='search'>
             <label>Search <input type="text"></input></label>
@@ -67,7 +78,7 @@ function FriendPage() {
 class App extends React.Component {
   render() {
     return (
-      <Router forceRefresh='true'>
+      <Router forceRefresh={true}>
         <Switch>
           <Route exact path="/" children={<UserPage />} />
           <Route path="/:id" children={<FriendPage />} />
