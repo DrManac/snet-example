@@ -11,6 +11,7 @@ import {
 
 var userId = 'test6@test'
 
+
 async function loadData(id) {
   let response = await fetch(`http://localhost:3600/users/${id}`)
   return response.json()
@@ -33,7 +34,6 @@ class UserPage extends React.Component {
   render() {
     return <div>
       <h1>{this.state.userData?.name}</h1>
-        <input type="button" value='Log out'/>
         <ul>
           {this.state.userData?.friends.map((f, i) => 
             <li key={i}>
@@ -52,6 +52,18 @@ class UserPage extends React.Component {
     </div>
   }
 
+}
+
+class LoginPage extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  logIn = () => this.props.handleLogin()
+  render() {
+    return <div>
+      <button onClick={(e) => this.logIn()}>Login</button>
+    </div>
+  }
 }
 
 function FriendPage() {
@@ -76,15 +88,24 @@ function FriendPage() {
 
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {loggedIn: false}
+  }
+  handleLogin = () => {this.setState({loggedIn: true})}
+  handleLogout = () => {this.setState({loggedIn: false})}
   render() {
-    return (
-      <Router forceRefresh={true}>
-        <Switch>
-          <Route exact path="/" children={<UserPage />} />
-          <Route path="/:id" children={<FriendPage />} />
-        </Switch>        
-      </Router>
-    );
+    if(!this.state.loggedIn) 
+      return <LoginPage handleLogin={this.handleLogin}/>
+    return <div>
+        <button onClick={(e) => this.handleLogout()}>Log out</button>
+        <Router forceRefresh={true}>
+          <Switch>
+            <Route exact path="/" children={<UserPage />} />
+            <Route path="/:id" children={<FriendPage />} />
+          </Switch>        
+        </Router>
+      </div>
   }
 }
 
