@@ -68,9 +68,19 @@ async function deleteFriend(req, res) {
     res.status(200).send();
 }
 
+async function signIn(req, res) {
+    console.log(`signIn`);
+    var user = await User.find({'email': req.body.email, 'pass': req.body.pass})
+    console.log(user)
+    if(user.length == 1)
+        res.status(200).send(JSON.stringify('token'));
+    else
+        res.status(401).send()
+}
+
 app.get('/users/:userId', [getUser]);
 app.delete('/users/:userId/friends/:friendId', [deleteFriend])
-
+app.post('/signIn', [signIn])
     
 app.listen(config.port, function () {
     console.log('app listening at port %s', config.port);
