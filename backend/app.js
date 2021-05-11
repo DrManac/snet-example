@@ -5,6 +5,15 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+function generateAccessToken(email) {
+    return jwt.sign({email}, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+  }
+
 const config = {
     "port": 3600,
     "appEndpoint": "http://localhost:3600",
@@ -72,8 +81,10 @@ async function signIn(req, res) {
     console.log(`signIn`);
     var user = await User.find({'email': req.body.email, 'pass': req.body.pass})
     console.log(user)
-    if(user.length == 1)
-        res.status(200).send(JSON.stringify('token'));
+    if(user.length == 1) {
+        const token = generateAccessToken(user[0].email);
+        res.status(200).send(JSON.stringify(token));
+    }
     else
         res.status(401).send()
 }
@@ -88,8 +99,10 @@ async function signUp(req, res) {
         return
     }
     console.log(user)
-    if(user)
-        res.status(200).send(JSON.stringify('token'));
+    if(user) {
+        const token = generateAccessToken(user.email);
+        res.status(200).send(JSON.stringify(token));
+    }
     else
         res.status(401).send()
 }
