@@ -17,6 +17,7 @@ export class LoginPage extends React.Component {
           <label>Password<input type='password' onChange={(v)=>this.setState({pass: v.target.value})}/></label>
         </div>
         <button onClick={(e) => this.logIn()}>Login</button>
+        <a href='/signup'>Sign up</a>
       </div>
     }
   }

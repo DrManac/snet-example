@@ -11,6 +11,7 @@ import {
 import {FriendPage} from './pages/friend'
 import {UserPage} from './pages/user'
 import {LoginPage} from './pages/login'
+import { SignupPage, SignupPageWithRouter } from './pages/signup';
 
 
 class App extends React.Component {
@@ -27,9 +28,22 @@ class App extends React.Component {
     localStorage.removeItem('token')
     this.setState({loggedIn: localStorage.getItem('token')})
   }
+  handleSignup = async (user) => {
+    let token = await be.signUp(user)
+    if(token) localStorage.setItem('token', token)
+    this.setState({loggedIn: localStorage.getItem('token')})
+  }
   render() {
     if(!this.state.loggedIn) 
-      return <LoginPage handleLogin={this.handleLogin}/>
+      return <div>
+        <Router forceRefresh={true}>
+          <Switch>
+            <Route exact path="/signup" children={<SignupPageWithRouter handleSignup={this.handleSignup}/>} />
+            <Route children={<LoginPage handleLogin={this.handleLogin}/>} />
+          </Switch>        
+        </Router>
+      </div>
+
     return <div>
         <button onClick={(e) => this.handleLogout()}>Log out</button>
         <Router forceRefresh={true}>

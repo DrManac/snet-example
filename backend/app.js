@@ -78,9 +78,26 @@ async function signIn(req, res) {
         res.status(401).send()
 }
 
+async function signUp(req, res) {
+    console.log(`signUp`);
+    var user
+    try {
+        user = await User.create(req.body)
+    } catch {
+        res.status(422).send()
+        return
+    }
+    console.log(user)
+    if(user)
+        res.status(200).send(JSON.stringify('token'));
+    else
+        res.status(401).send()
+}
+
 app.get('/users/:userId', [getUser]);
 app.delete('/users/:userId/friends/:friendId', [deleteFriend])
 app.post('/signIn', [signIn])
+app.post('/signUp', [signUp])
     
 app.listen(config.port, function () {
     console.log('app listening at port %s', config.port);
