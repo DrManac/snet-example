@@ -14,18 +14,25 @@ function generateAccessToken(email) {
     return jwt.sign({email}, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
   }
 
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+
+    if (token == null) return res.sendStatus(401)
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+        console.log(err)
+        if (err) return res.sendStatus(403)
+        req.user = user
+        next()
+    })
+}
+
 const config = {
     "port": 3600,
     "appEndpoint": "http://localhost:3600",
     "apiEndpoint": "http://localhost:3600",
-    // "jwt_secret": "myS33!!creeeT",
-    // "jwt_expiration_in_seconds": 36000,
-    // "environment": "dev",
-    // "permissionLevels": {
-    //     "NORMAL_USER": 1,
-    //     "PAID_USER": 4,
-    //     "ADMIN": 2048
-    // }
 };
 
 mongoose.connect('mongodb+srv://dbUser:AUoCq0hU7LRv0BUW@cluster0.qkus8.mongodb.net/test?authSource=admin&replicaSet=atlas-lo5j12-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true', {useNewUrlParser: true, useUnifiedTopology: true});
@@ -107,8 +114,8 @@ async function signUp(req, res) {
         res.status(401).send()
 }
 
-app.get('/users/:userId', [getUser]);
-app.delete('/users/:userId/friends/:friendId', [deleteFriend])
+app.get('/users/:userId', [authenticateToken, getUser]);
+app.delete('/users/:userId/friends/:friendId', [authenticateToken, deleteFriend])
 app.post('/signIn', [signIn])
 app.post('/signUp', [signUp])
     

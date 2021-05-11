@@ -25,10 +25,10 @@ export async function signUp(user) {
 }
 
 export async function getUser(id) {
-    let response = await fetch(`${backend_url}/users/${id}`)
+    let response = await fetch(`${backend_url}/users/${id}`, {headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}})
     return response.json()
 }
 
 export async function deleteFriend(userId, friendId) {
-    await fetch( `${backend_url}/users/${userId}/friends/${friendId}`, {method: 'DELETE'})
+    await fetch( `${backend_url}/users/${userId}/friends/${friendId}`, {method: 'DELETE', headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}})
 }
