@@ -2,19 +2,17 @@ import React from 'react';
 import {Link} from "react-router-dom";
 import * as be from '../backend'
 
-var userId = 'test6@test'
-
 export class UserPage extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
         userData: null,
       };
-      be.getUser(userId).then((data) => {this.setState({userData: data})})
+      be.getUser().then((data) => {this.setState({userData: data})})
     }
     deleteFriend = async (friendId) => {
-      be.deleteFriend(userId, friendId)
-      be.getUser(userId).then((data) => {this.setState({userData: data})})
+      be.deleteFriend(this.state.userData.email, friendId)
+      be.getUser().then((data) => {this.setState({userData: data})})
     }
     
     render() {

@@ -25,6 +25,7 @@ export async function signUp(user) {
 }
 
 export async function getUser(id) {
+    id = id || 'me'
     let response = await fetch(`${backend_url}/users/${id}`, {headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}})
     return response.json()
 }

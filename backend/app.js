@@ -62,7 +62,8 @@ app.use(bodyParser.json());
 
 async function getUser(req, res) {
     console.log(`get user ${req.params.userId}`);
-    //let user = await User.findOne({email: req.params.userId});
+    if(req.params.userId == 'me')
+        req.params.userId = req.user.email
     let user = await User.aggregate([
         {'$match': {'email': req.params.userId}}, 
         {'$unwind': {'path': '$friends', 'preserveNullAndEmptyArrays': true}}, 
