@@ -30,6 +30,24 @@ export async function getUser(id) {
     return response.json()
 }
 
+export async function addFriend(userId, friendId) {
+    await fetch( `${backend_url}/users/${userId}/friends/`, 
+        {
+            method: 'POST', 
+            body: JSON.stringify({id: friendId}),
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                "Content-Type": "application/json"
+            },
+        })
+}
+
 export async function deleteFriend(userId, friendId) {
     await fetch( `${backend_url}/users/${userId}/friends/${friendId}`, {method: 'DELETE', headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}})
+}
+
+export async function find(query) {
+    let response = await fetch(`${backend_url}/users/?query=${query}`, {headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}})
+    return response.json()
+    //return [{name: query}]
 }

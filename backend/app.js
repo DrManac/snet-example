@@ -85,6 +85,28 @@ async function deleteFriend(req, res) {
     res.status(200).send();
 }
 
+async function addFriend(req, res) {
+    try {
+        let friendId = req.body.id
+        console.log(`add friend ${friendId} to user ${req.params.userId}`);
+        await User.updateOne({'email': req.params.userId}, {'$push': {'friends': friendId}})
+        res.status(200).send();
+    } catch (e){
+        res.status(500).send()
+    }
+}
+
+async function find(req, res) {
+    console.log(`find user ${req.query.query}`);
+    if(!req.query.query){
+        res.status(200).send([]);
+        return
+    }
+    //let users = [{name: 'mock user'}]
+    let users = await User.find({name: {'$regex': req.query.query}})
+    res.status(200).send(users);
+}
+
 async function signIn(req, res) {
     console.log(`signIn`);
     var user = await User.find({'email': req.body.email, 'pass': req.body.pass})
@@ -116,7 +138,9 @@ async function signUp(req, res) {
 }
 
 app.get('/users/:userId', [authenticateToken, getUser]);
+app.get('/users/', [authenticateToken, find]);
 app.delete('/users/:userId/friends/:friendId', [authenticateToken, deleteFriend])
+app.post('/users/:userId/friends', [authenticateToken, addFriend])
 app.post('/signIn', [signIn])
 app.post('/signUp', [signUp])
     
